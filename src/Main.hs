@@ -1,11 +1,22 @@
 module Main where
 
-import Data.Matrix
-
 main :: IO ()
 main = do
   putStrLn "Enter an impcomplete sudoku: "
   input <- getLine
   let arr = read input :: [[Integer]]
-  let m = fromLists arr
-  print m
+  printSudoku arr
+
+printSudoku :: [[Integer]] -> IO ()
+printSudoku [] = return ()
+printSudoku (r:rs) = do
+  printRow r
+  putStrLn ""
+  printSudoku rs
+  where
+    printRow :: [Integer] -> IO ()
+    printRow [] = return ()
+    printRow (x:xs) = do
+      putStr (show x)
+      putStr " "
+      printRow xs
