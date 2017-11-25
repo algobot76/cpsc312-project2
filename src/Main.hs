@@ -20,3 +20,9 @@ printSudoku (r:rs) = do
       putStr (show x)
       putStr " "
       printRow xs
+
+containsZero :: [[Integer]] -> Bool
+containsZero [] = False
+containsZero (r:rs)
+  | 0 `elem` r = True
+  | otherwise = containsZero rs
