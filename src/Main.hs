@@ -21,6 +21,33 @@ printSudoku (r:rs) = do
       putStr " "
       printRow xs
 
+-- Return the row of sudoku at rowIdx
+getRow :: [[Integer]] -> Int -> [Integer]
+getRow sudoku rowIdx = sudoku !! rowIdx
+
+-- Return the column of sudoku at colIdx
+getCol :: [[Integer]] -> Int -> [Integer]
+getCol sudoku colIdx = [x !! colIdx | x <- sudoku]
+
+-- Return the main diagonal of sudoku
+getMainDiagonal :: [[Integer]] -> [Integer]
+getMainDiagonal sudoku = getMainDiagonalHelper sudoku 0
+  where
+    getMainDiagonalHelper :: [[Integer]] -> Int -> [Integer]
+    getMainDiagonalHelper _ 9 = []
+    getMainDiagonalHelper _ n =
+      (sudoku !! n) !! n : getMainDiagonalHelper sudoku (n + 1)
+
+-- Return the anti-diagonal of sudoku
+getAntidiagonal :: [[Integer]] -> [Integer]
+getAntidiagonal sudoku = getAntidiagonalHelper sudoku 0
+  where
+    getAntidiagonalHelper _ 9 = []
+    getAntidiagonalHelper _ n =
+      (sudoku !! n) !! (length sudoku - 1 - n) :
+      getAntidiagonalHelper sudoku (n + 1)
+
+-- Check if a sudoku contains 0
 containsZero :: [[Integer]] -> Bool
 containsZero [] = False
 containsZero (r:rs)
