@@ -30,23 +30,21 @@ getCol :: [[Integer]] -> Int -> [Integer]
 getCol sudoku colIdx = [x !! colIdx | x <- sudoku]
 
 -- Return the main diagonal of sudoku
-getMainDiagonal :: [[Integer]] -> [Integer]
-getMainDiagonal sudoku = getMainDiagonalHelper sudoku 0
-  where
-    getMainDiagonalHelper :: [[Integer]] -> Int -> [Integer]
-    getMainDiagonalHelper _ 9 = []
-    getMainDiagonalHelper _ n =
-      (sudoku !! n) !! n : getMainDiagonalHelper sudoku (n + 1)
-
+-- getMainDiagonal :: [[Integer]] -> [Integer]
+-- getMainDiagonal sudoku = getMainDiagonalHelper sudoku 0
+--   where
+--     getMainDiagonalHelper :: [[Integer]] -> Int -> [Integer]
+--     getMainDiagonalHelper _ 9 = []
+--     getMainDiagonalHelper _ n =
+--       (sudoku !! n) !! n : getMainDiagonalHelper sudoku (n + 1)
 -- Return the anti-diagonal of sudoku
-getAntidiagonal :: [[Integer]] -> [Integer]
-getAntidiagonal sudoku = getAntidiagonalHelper sudoku 0
-  where
-    getAntidiagonalHelper _ 9 = []
-    getAntidiagonalHelper _ n =
-      (sudoku !! n) !! (length sudoku - 1 - n) :
-      getAntidiagonalHelper sudoku (n + 1)
-
+-- getAntidiagonal :: [[Integer]] -> [Integer]
+-- getAntidiagonal sudoku = getAntidiagonalHelper sudoku 0
+--   where
+--     getAntidiagonalHelper _ 9 = []
+--     getAntidiagonalHelper _ n =
+--       (sudoku !! n) !! (length sudoku - 1 - n) :
+--       getAntidiagonalHelper sudoku (n + 1)
 -- Check if a sudoku contains 0
 containsZero :: [[Integer]] -> Bool
 containsZero [] = False
