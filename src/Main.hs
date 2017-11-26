@@ -29,6 +29,27 @@ getRow sudoku rowIdx = sudoku !! rowIdx
 getCol :: [[Integer]] -> Int -> [Integer]
 getCol sudoku colIdx = [x !! colIdx | x <- sudoku]
 
+-- Return the submatrix (1-9) of sudoku
+getSubMatrix :: [[Integer]] -> Int -> [[Integer]]
+getSubMatrix sudoku smNum =
+  case smNum of
+    1 -> getSubMatrixHelper sudoku 0 0
+    2 -> getSubMatrixHelper sudoku 0 3
+    3 -> getSubMatrixHelper sudoku 0 6
+    4 -> getSubMatrixHelper sudoku 3 0
+    5 -> getSubMatrixHelper sudoku 3 3
+    6 -> getSubMatrixHelper sudoku 3 6
+    7 -> getSubMatrixHelper sudoku 6 0
+    8 -> getSubMatrixHelper sudoku 6 3
+    9 -> getSubMatrixHelper sudoku 6 6
+  where
+    getSubMatrixHelper :: [[Integer]] -> Int -> Int -> [[Integer]]
+    getSubMatrixHelper _ rowIdx colIdx =
+      [ drop colIdx (take (colIdx + 3) (getRow sudoku rowIdx))
+      , drop colIdx (take (colIdx + 3) (getRow sudoku (rowIdx + 1)))
+      , drop colIdx (take (colIdx + 3) (getRow sudoku (rowIdx + 2)))
+      ]
+
 -- Return the main diagonal of sudoku
 -- getMainDiagonal :: [[Integer]] -> [Integer]
 -- getMainDiagonal sudoku = getMainDiagonalHelper sudoku 0
@@ -56,21 +77,20 @@ containsZero (r:rs)
 isUnique :: [Integer] -> Bool
 isUnique [] = True
 isUnique (x:xs) = x `notElem` xs && isUnique xs
-
 -- Check if a sudoku is valid
-isValid :: [[Integer]] -> Bool
-isValid sudoku =
-  containsZero sudoku &&
-  checkRows sudoku 0 && checkCols sudoku 0 && checkDiagonals sudoku
-  where
-    checkRows :: [[Integer]] -> Int -> Bool
-    checkRows _ 9 = True
-    checkRows _ n =
-      isUnique (getRow sudoku n) && isUnique (getRow sudoku (n + 1))
-    checkCols :: [[Integer]] -> Int -> Bool
-    checkCols _ 9 = True
-    checkCols _ n =
-      isUnique (getCol sudoku n) && isUnique (getCol sudoku (n + 1))
-    checkDiagonals :: [[Integer]] -> Bool
-    checkDiagonals _ =
-      isUnique (getMainDiagonal sudoku) && isUnique (getAntidiagonal sudoku)
+-- isValid :: [[Integer]] -> Bool
+-- isValid sudoku =
+--   containsZero sudoku &&
+--   checkRows sudoku 0 && checkCols sudoku 0 && checkDiagonals sudoku
+--   where
+--     checkRows :: [[Integer]] -> Int -> Bool
+--     checkRows _ 9 = True
+--     checkRows _ n =
+--       isUnique (getRow sudoku n) && isUnique (getRow sudoku (n + 1))
+--     checkCols :: [[Integer]] -> Int -> Bool
+--     checkCols _ 9 = True
+--     checkCols _ n =
+--       isUnique (getCol sudoku n) && isUnique (getCol sudoku (n + 1))
+--     checkDiagonals :: [[Integer]] -> Bool
+--     checkDiagonals _ =
+--       isUnique (getMainDiagonal sudoku) && isUnique (getAntidiagonal sudoku)
