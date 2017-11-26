@@ -50,22 +50,6 @@ getSubMatrix sudoku smNum =
       , drop colIdx (take (colIdx + 3) (getRow sudoku (rowIdx + 2)))
       ]
 
--- Return the main diagonal of sudoku
--- getMainDiagonal :: [[Integer]] -> [Integer]
--- getMainDiagonal sudoku = getMainDiagonalHelper sudoku 0
---   where
---     getMainDiagonalHelper :: [[Integer]] -> Int -> [Integer]
---     getMainDiagonalHelper _ 9 = []
---     getMainDiagonalHelper _ n =
---       (sudoku !! n) !! n : getMainDiagonalHelper sudoku (n + 1)
--- Return the anti-diagonal of sudoku
--- getAntidiagonal :: [[Integer]] -> [Integer]
--- getAntidiagonal sudoku = getAntidiagonalHelper sudoku 0
---   where
---     getAntidiagonalHelper _ 9 = []
---     getAntidiagonalHelper _ n =
---       (sudoku !! n) !! (length sudoku - 1 - n) :
---       getAntidiagonalHelper sudoku (n + 1)
 -- Check if a sudoku contains 0
 containsZero :: [[Integer]] -> Bool
 containsZero [] = False
@@ -81,20 +65,14 @@ isUnique (x:xs) = x `notElem` xs && isUnique xs
 -- Check if a sudoku is valid
 isValid :: [[Integer]] -> Bool
 isValid sudoku =
-  containsZero sudoku &&
-  checkRows sudoku 0 && checkCols sudoku 0 && checkSubMatrices sudoku 9
+  not (containsZero sudoku) &&
+  and [checkRow sudoku rowIdx | rowIdx <- [0 .. 8]] &&
+  and [checkCol sudoku colIdx | colIdx <- [0 .. 8]] &&
+  and [checkSubMatrix sudoku smNum | smNum <- [1 .. 9]]
   where
-    checkRows :: [[Integer]] -> Int -> Bool
-    checkRows _ 9 = True
-    checkRows _ n =
-      isUnique (getRow sudoku n) && isUnique (getRow sudoku (n + 1))
-    checkCols :: [[Integer]] -> Int -> Bool
-    checkCols _ 9 = True
-    checkCols _ n =
-      isUnique (getCol sudoku n) && isUnique (getCol sudoku (n + 1))
-    checkSubMatrices :: [[Integer]] -> Int -> Bool
-    checkSubMatrices _ 0 = True
-    checkSubMatrices _ n =
-      checkSubMatrix sudoku n && checkSubMatrices sudoku (n - 1)
+    checkRow :: [[Integer]] -> Int -> Bool
+    checkRow _ rowIdx = isUnique (getRow sudoku rowIdx)
+    checkCol :: [[Integer]] -> Int -> Bool
+    checkCol _ colIdx = isUnique (getCol sudoku colIdx)
     checkSubMatrix :: [[Integer]] -> Int -> Bool
     checkSubMatrix _ smNum = isUnique (concat (getSubMatrix sudoku smNum))
