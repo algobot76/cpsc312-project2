@@ -29,23 +29,26 @@ getRow sudoku rowIdx = sudoku !! rowIdx
 getCol :: [[Integer]] -> Int -> [Integer]
 getCol sudoku colIdx = [x !! colIdx | x <- sudoku]
 
--- Return the main diagonal of sudoku
-getMainDiagonal :: [[Integer]] -> [Integer]
-getMainDiagonal sudoku = getMainDiagonalHelper sudoku 0
+-- Return the submatrix (1-9) of sudoku
+getSubMatrix :: [[Integer]] -> Int -> [[Integer]]
+getSubMatrix sudoku smNum =
+  case smNum of
+    1 -> getSubMatrixHelper sudoku 0 0
+    2 -> getSubMatrixHelper sudoku 0 3
+    3 -> getSubMatrixHelper sudoku 0 6
+    4 -> getSubMatrixHelper sudoku 3 0
+    5 -> getSubMatrixHelper sudoku 3 3
+    6 -> getSubMatrixHelper sudoku 3 6
+    7 -> getSubMatrixHelper sudoku 6 0
+    8 -> getSubMatrixHelper sudoku 6 3
+    9 -> getSubMatrixHelper sudoku 6 6
   where
-    getMainDiagonalHelper :: [[Integer]] -> Int -> [Integer]
-    getMainDiagonalHelper _ 9 = []
-    getMainDiagonalHelper _ n =
-      (sudoku !! n) !! n : getMainDiagonalHelper sudoku (n + 1)
-
--- Return the anti-diagonal of sudoku
-getAntidiagonal :: [[Integer]] -> [Integer]
-getAntidiagonal sudoku = getAntidiagonalHelper sudoku 0
-  where
-    getAntidiagonalHelper _ 9 = []
-    getAntidiagonalHelper _ n =
-      (sudoku !! n) !! (length sudoku - 1 - n) :
-      getAntidiagonalHelper sudoku (n + 1)
+    getSubMatrixHelper :: [[Integer]] -> Int -> Int -> [[Integer]]
+    getSubMatrixHelper _ rowIdx colIdx =
+      [ drop colIdx (take (colIdx + 3) (getRow sudoku rowIdx))
+      , drop colIdx (take (colIdx + 3) (getRow sudoku (rowIdx + 1)))
+      , drop colIdx (take (colIdx + 3) (getRow sudoku (rowIdx + 2)))
+      ]
 
 -- Check if a sudoku contains 0
 containsZero :: [[Integer]] -> Bool
@@ -62,17 +65,14 @@ isUnique (x:xs) = x `notElem` xs && isUnique xs
 -- Check if a sudoku is valid
 isValid :: [[Integer]] -> Bool
 isValid sudoku =
-  containsZero sudoku &&
-  checkRows sudoku 0 && checkCols sudoku 0 && checkDiagonals sudoku
+  not (containsZero sudoku) &&
+  and [checkRow sudoku rowIdx | rowIdx <- [0 .. 8]] &&
+  and [checkCol sudoku colIdx | colIdx <- [0 .. 8]] &&
+  and [checkSubMatrix sudoku smNum | smNum <- [1 .. 9]]
   where
-    checkRows :: [[Integer]] -> Int -> Bool
-    checkRows _ 9 = True
-    checkRows _ n =
-      isUnique (getRow sudoku n) && isUnique (getRow sudoku (n + 1))
-    checkCols :: [[Integer]] -> Int -> Bool
-    checkCols _ 9 = True
-    checkCols _ n =
-      isUnique (getCol sudoku n) && isUnique (getCol sudoku (n + 1))
-    checkDiagonals :: [[Integer]] -> Bool
-    checkDiagonals _ =
-      isUnique (getMainDiagonal sudoku) && isUnique (getAntidiagonal sudoku)
+    checkRow :: [[Integer]] -> Int -> Bool
+    checkRow _ rowIdx = isUnique (getRow sudoku rowIdx)
+    checkCol :: [[Integer]] -> Int -> Bool
+    checkCol _ colIdx = isUnique (getCol sudoku colIdx)
+    checkSubMatrix :: [[Integer]] -> Int -> Bool
+    checkSubMatrix _ smNum = isUnique (concat (getSubMatrix sudoku smNum))
