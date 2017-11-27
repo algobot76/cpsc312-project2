@@ -21,6 +21,10 @@ printSudoku (r:rs) = do
       putStr " "
       printRow xs
 
+-- Return the number at (rowIdx, colIdx)
+getNum :: [[Integer]] -> Int -> Int -> Integer
+getNum sudoku rowIdx colIdx = (sudoku !! rowIdx) !! colIdx
+
 -- Return the row of sudoku at rowIdx
 getRow :: [[Integer]] -> Int -> [Integer]
 getRow sudoku rowIdx = sudoku !! rowIdx
@@ -75,3 +79,35 @@ isValid sudoku =
     checkCol _ colIdx = isUnique (getCol sudoku colIdx)
     checkSubMatrix :: [[Integer]] -> Int -> Bool
     checkSubMatrix _ smNum = isUnique (concat (getSubMatrix sudoku smNum))
+
+-- Check if a number can be filled in a slot (rowIdx,colIdx)
+canFill :: [[Integer]] -> Int -> Int -> Integer -> Bool
+canFill sudoku rowIdx colIdx num =
+  isEmpty sudoku rowIdx colIdx &&
+  checkRow sudoku rowIdx colIdx num &&
+  checkCol sudoku rowIdx colIdx num && checkSubMatrix sudoku rowIdx colIdx num
+  where
+    checkRow :: [[Integer]] -> Int -> Int -> Integer -> Bool
+    checkRow _ _ _ _ = num `notElem` getRow sudoku rowIdx
+    checkCol :: [[Integer]] -> Int -> Int -> Integer -> Bool
+    checkCol _ _ _ _ = num `notElem` getCol sudoku colIdx
+    checkSubMatrix :: [[Integer]] -> Int -> Int -> Integer -> Bool
+    checkSubMatrix _ _ _ _ =
+      num `notElem` concat (getSubMatrix sudoku (getSMNum rowIdx colIdx))
+
+-- Check if a slot at (rowIdx, colIdx) is empty
+isEmpty :: [[Integer]] -> Int -> Int -> Bool
+isEmpty sudoku rowIdx colIdx = 0 == getNum sudoku rowIdx colIdx
+
+-- Return the submatrix number based on rowIdx and colIdx
+getSMNum :: Int -> Int -> Int
+getSMNum rowIdx colIdx
+  | rowIdx < 3 && colIdx < 3 = 1
+  | rowIdx < 3 && colIdx > 2 && colIdx < 6 = 2
+  | rowIdx < 3 && colIdx > 5 = 3
+  | rowIdx > 2 && rowIdx < 6 && colIdx < 3 = 4
+  | rowIdx > 2 && rowIdx < 6 && colIdx > 2 && colIdx < 6 = 5
+  | rowIdx > 2 && rowIdx < 6 && colIdx > 5 = 6
+  | rowIdx > 5 && colIdx < 3 = 7
+  | rowIdx > 5 && colIdx > 2 && colIdx < 6 = 8
+  | otherwise = 9
