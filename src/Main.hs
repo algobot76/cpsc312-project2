@@ -45,9 +45,8 @@ getSubMatrix sudoku smNum =
   where
     getSubMatrixHelper :: [[Integer]] -> Int -> Int -> [[Integer]]
     getSubMatrixHelper _ rowIdx colIdx =
-      [ drop colIdx (take (colIdx + 3) (getRow sudoku rowIdx))
-      , drop colIdx (take (colIdx + 3) (getRow sudoku (rowIdx + 1)))
-      , drop colIdx (take (colIdx + 3) (getRow sudoku (rowIdx + 2)))
+      [ drop colIdx (take (colIdx + 3) (getRow sudoku (rowIdx + offset)))
+      | offset <- [0 .. 2]
       ]
 
 -- Check if a sudoku contains 0
