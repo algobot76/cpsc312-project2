@@ -25,6 +25,15 @@ printSudoku (r:rs) = do
 getNum :: [[Integer]] -> Int -> Int -> Integer
 getNum sudoku rowIdx colIdx = (sudoku !! rowIdx) !! colIdx
 
+-- Fill the number in slot at (rowIdx, colIdx)
+setNum :: [[Integer]] -> Int -> Int -> Integer -> [[Integer]]
+setNum sudoku rowIdx colIdx num =
+  take rowIdx sudoku ++
+  [replace (sudoku !! rowIdx) colIdx num] ++ drop (rowIdx + 1) sudoku
+  where
+    replace :: [Integer] -> Int -> Integer -> [Integer]
+    replace row _ _ = take colIdx row ++ [num] ++ drop (colIdx + 1) row
+
 -- Return the row of sudoku at rowIdx
 getRow :: [[Integer]] -> Int -> [Integer]
 getRow sudoku rowIdx = sudoku !! rowIdx
