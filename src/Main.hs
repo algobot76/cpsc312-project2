@@ -83,10 +83,15 @@ isValid sudoku =
 -- Check if a number can be filled in a slot (rowIdx,colIdx)
 canFill :: [[Integer]] -> Int -> Int -> Integer -> Bool
 canFill sudoku rowIdx colIdx num =
-  isEmpty sudoku rowIdx colIdx &&
+  isAvailable sudoku rowIdx colIdx &&
   checkRow sudoku rowIdx colIdx num &&
   checkCol sudoku rowIdx colIdx num && checkSubMatrix sudoku rowIdx colIdx num
   where
+    isAvailable :: [[Integer]] -> Int -> Int -> Bool
+    isAvailable _ _ _ =
+      0 `elem` getRow sudoku rowIdx &&
+      0 `elem` getCol sudoku colIdx &&
+      0 `elem` concat (getSubMatrix sudoku (getSMNum rowIdx colIdx))
     checkRow :: [[Integer]] -> Int -> Int -> Integer -> Bool
     checkRow _ _ _ _ = num `notElem` getRow sudoku rowIdx
     checkCol :: [[Integer]] -> Int -> Int -> Integer -> Bool
