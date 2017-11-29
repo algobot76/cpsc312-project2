@@ -49,6 +49,16 @@ getRow sudoku rowIdx = sudoku !! rowIdx
 getCol :: [[Integer]] -> Int -> [Integer]
 getCol sudoku colIdx = [ x !! colIdx | x <- sudoku ]
 
+-- Return the height of the sudoku board
+getHeight :: [[Integer]] -> Int
+getHeight sudoku
+  = length sudoku
+
+-- Return the width of the sudoku board
+getWidth :: [[Integer]] -> Int
+getWidth sudoku
+  = length $ getRow sudoku 0
+
 -- Return the submatrix (1-9) of sudoku
 getSubMatrix :: [[Integer]] -> Int -> [[Integer]]
 getSubMatrix sudoku smNum = case smNum of
@@ -82,10 +92,15 @@ isUnique (x:xs) = x `notElem` xs && isUnique xs
 -- Check if a sudoku is valid
 isValid :: [[Integer]] -> Bool
 isValid sudoku =
-    not (containsZero sudoku)
-        && and [ checkRow sudoku rowIdx | rowIdx <- [0 .. 8] ]
-        && and [ checkCol sudoku colIdx | colIdx <- [0 .. 8] ]
-        && and [ checkSubMatrix sudoku smNum | smNum <- [1 .. 9] ]
+   not (containsZero sudoku)
+      && and (satisfiesConstraints sudoku)
+    
+-- Check if a sudoku satisfies sudoku constraints (but can have zeroes)
+satisfiesConstraints :: [[Integer]] -> Bool
+satisfiesConstraints sudoku = 
+  [ checkRow sudoku rowIdx | rowIdx <- [0 .. 8] ]
+      && and [ checkCol sudoku colIdx | colIdx <- [0 .. 8] ]
+      && and [ checkSubMatrix sudoku smNum | smNum <- [1 .. 9] ]
   where
     checkRow :: [[Integer]] -> Int -> Bool
     checkRow _ rowIdx = isUnique (getRow sudoku rowIdx)
@@ -134,3 +149,94 @@ getSMNum rowIdx colIdx
     | rowIdx > 5 && colIdx < 3               = 7
     | rowIdx > 5 && colIdx > 2 && colIdx < 6 = 8
     | otherwise                              = 9
+
+data EntryPosition = Position Int Int | NONE
+isNONE NONE = True
+isNONE (Position a b) = False
+getX (Position a b) = a
+getY (Position a b) = b
+
+-- firstZero: finds (x,y) location of first zero, or NONE
+firstZero :: [[Integer]] -> EntryPosition
+firstZero sudoku
+  = firstZeroHelper sudoku 0 0
+
+firstZeroHelper :: [[Integer]] -> Int -> Int -> EntryPosition
+firstZeroHelper sudoku y x
+  | getNum sudoku x y == 0 = Position x y
+  | otherwise = firstZeroHelper sudoku y (x + 1)
+  where nextx | x < (getWidth sudoku) - 1 =  x + 1
+              | otherwise = 0
+        nexty | nextx == 0 = y + 1
+              | otherwise = y
+
+-- zeros: constructs a matrix of zeros
+zeros :: Int -> Int -> [[Integer]]
+zeros w h
+  = [[0 | x <- [1..w]] | y <- [1..h]]
+
+-- Brute Force solver: fills in zeros, or returns impossible
+data SudokuSolution = FoundSolution [[Integer]] | UNSAT
+
+solve :: [[Integer]] -> SudokuSolution
+solve sudoku
+  = solveHelper sudoku $ zeros (getHeight sudoku) (getWidth sudoku)
+
+solveHelper :: [[Integer]] -> [[Integer]] -> SudokuSolution
+solveHelper sudoku scratch
+  | isValid scratch = FoundSolution scratch
+  | (isUNSAT nextScratch) = UNSAT
+  | (satisfiesConstraints scratch) && (matches scratch sudoku) =
+      increment sudoku scratch False
+  | otherwise = solveHelper sudoku (getMatrix nextScratch)
+  where nextScratch = increment sudoku scratch True
+  
+-- increment: checks if scratch board can be incremented given a constraining sudoku puzzle
+increment :: [[Integer]] -> [[Integer]] -> Bool -> SudokuSolution
+increment sudoku scratch backtrack
+  | isNONE fz = UNSAT
+  | otherwise = incrementHelper sudoku scratch (getX fz) (getY fz)
+  where fz = firstZero scratch
+  
+incrementHelper :: [[Integer]] -> [[Integer]] -> Int -> Int -> SudokuSolution
+incrementHelper sudoku scratch y x
+  | unsat = UNSAT
+  | (satisfiesConstraints scratch) && (matches sudoku scratch)
+  | fixed = incrementHelper sudoku scratch nextx nexty
+  | num < 9 = FoundSolution $ setNum sudoku y x (1 + getNum sudoku y x)
+  | otherwise = incrementHelper sudoku (setNum sudoku x y 0) nextx nexty
+  where num = getNum scratch y x
+        fixed = (getNum sudoku y x) > 0
+        nextx | x > 0 = x - 1
+              | otherwise = (getWidth sudoku) - 1
+        nexty | x > 0 = y
+              | otherwise = y - 1
+        unsat = nexty < 0
+
+-- matches: checks that the non-zero terms agree
+matches [[Integer]] -> [[Integer]] -> Bool
+matches a b = 
+    null $ filter (\(a,b) -> !(a == 0 || b == 0 || a == b)) (zip fa fb)
+    where fa = flatten a
+          fb = flatten b
+    
+-- flatten: flattens a 2d list
+flatten:: [[a]] -> [a] =
+flatten =
+    foldr (\x y -> x ++ y) []
+
+isUNSAT :: SudokuSolution -> Bool
+isUNSAT UNSAT = True
+isUNSAT (FoundSolution matrix)= False
+
+getMatrix (FoundSolution matrix) = matrix
+
+simpleBoard = [[0,1,0,0,4,0,0,5,0],
+               [0,0,0,0,2,0,0,3,0],
+               [0,0,2,0,0,0,0,0,0],
+               [0,0,1,0,0,6,0,0,0],
+               [9,0,0,8,0,0,7,0,0],
+               [0,0,0,0,5,0,0,0,0],
+               [0,0,0,0,0,0,2,0,0],
+               [0,0,0,1,0,0,5,0,0],
+               [1,0,0,0,0,0,0,0,7]]
