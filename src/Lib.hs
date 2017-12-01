@@ -1,22 +1,7 @@
 module Lib
     (
-    printSudoku,
     solve
     ) where
-
-printSudoku :: [[Integer]] -> IO ()
-printSudoku []     = return ()
-printSudoku (r:rs) = do
-  printRow r
-  putStrLn ""
-  printSudoku rs
- where
-  printRow :: [Integer] -> IO ()
-  printRow []     = return ()
-  printRow (x:xs) = do
-    putStr (show x)
-    putStr " "
-    printRow xs
 
 -- Return the number at (rowIdx, colIdx)
 getNum :: [[Integer]] -> Int -> Int -> Integer
@@ -162,6 +147,17 @@ zeros w h = [ [ 0 | x <- [1 .. w] ] | y <- [1 .. h] ]
 
 -- Brute Force solver: fills in zeros, or returns impossible
 data SudokuSolution = FoundSolution [[Integer]] | UNSAT
+instance Show SudokuSolution where
+  show (FoundSolution sudoku) =  sudoku2Str sudoku
+  show UNSAT = "Solution not found :("
+
+sudoku2Str :: [[Integer]] -> String
+sudoku2Str [] = ""
+sudoku2Str (r:rs) = row2Str r ++ "\n" ++ sudoku2Str rs
+  where
+    row2Str :: [Integer] -> String
+    row2Str [] = ""
+    row2Str (x:xs) = show x ++ row2Str xs
 
 solve :: [[Integer]] -> SudokuSolution
 solve sudoku = solveHelper sudoku $ zeros (getHeight sudoku) (getWidth sudoku)
