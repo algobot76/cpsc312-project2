@@ -51,7 +51,7 @@ satCtrT3 = TestCase (assertEqual "for (satisfiesConstraints [[1,2,3,3],[1]])," F
 --commented out, pending implementation of Eq for EntryPosition and SudokuSolution
 fs0T1 = TestCase (assertEqual "for (firstZero sampleUnsolved)," (Position 2 0) (firstZero sampleUnsolved))
 fs0T2 = TestCase (assertEqual "for (firstZero sampleSolved)," NONE (firstZero sampleSolved))
-fs0T3 = TestCase (assertEqual "for (firstZero (setNum sampleUnsolved 8 8 0)," (Position 8 8) (firstZero (setNum sampleUnsolved 8 8 0)))
+fs0T3 = TestCase (assertEqual "for (firstZero (setNum sampleSolved 8 8 0)," (Position 8 8) (firstZero (setNum sampleSolved 8 8 0)))
 solT1 = TestCase (assertEqual "for (solve sampleUnsolved)," (FoundSolution sampleSolved) (solve sampleUnsolved))
 solT2 = TestCase (assertEqual "for (solve sampleImpossible)," UNSAT (solve sampleImpossible))
 
