@@ -128,7 +128,10 @@ module Lib where
   isNONE (Position a b) = False
   getX (Position a b) = a
   getY (Position a b) = b
-    
+  
+  instance Show EntryPosition where
+    show (Position a b) = concat ["Position ", show a, " ", show b]
+    show _ = "NONE"
   instance Eq EntryPosition where
     (==) (Position a b) (Position c d) = (a == c) && (b == d)
     (==) _ _ = False
@@ -138,8 +141,10 @@ module Lib where
   firstZero sudoku = firstZeroHelper sudoku 0 0
   
   firstZeroHelper :: [[Integer]] -> Int -> Int -> EntryPosition
-  firstZeroHelper sudoku y x | getNum sudoku x y == 0 = Position x y
-                             | otherwise = firstZeroHelper sudoku y (x + 1)
+  firstZeroHelper sudoku y x
+    | getNum sudoku x y == 0 = Position x y
+    | (y == ((getHeight sudoku)-1)) && (x == ((getWidth sudoku)-1)) = NONE
+    | otherwise = firstZeroHelper sudoku nexty nextx
    where
     nextx | x < (getWidth sudoku) - 1 = x + 1
           | otherwise                 = 0
