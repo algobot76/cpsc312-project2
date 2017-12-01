@@ -119,11 +119,19 @@ getSMNum rowIdx colIdx
   | rowIdx > 5 && colIdx > 2 && colIdx < 6 = 8
   | otherwise                              = 9
 
-data EntryPosition = Position Int Int | NONE
-isNONE NONE           = True
-isNONE (Position a b) = False
-getX (Position a b) = a
-getY (Position a b) = b
+data EntryPosition = Position Int Int | NONE deriving (Eq, Show)
+  isNONE NONE           = True
+  isNONE (Position a b) = False
+  getX (Position a b) = a
+  getY (Position a b) = b
+
+instance Show EntryPosition where
+  show NONE = "NONE"
+  show Position x y = "Position " ++ x ++ y
+
+instance Eq EntryPosition where
+  (==) (Position a b) (Position c d) = (a == c) && (b == d)
+  (==) _ _ = False
 
 -- firstZero: finds (x,y) location of first zero, or NONE
 firstZero :: [[Integer]] -> EntryPosition
@@ -143,10 +151,15 @@ zeros :: Int -> Int -> [[Integer]]
 zeros w h = [ [ 0 | x <- [1 .. w] ] | y <- [1 .. h] ]
 
 -- Brute Force solver: fills in zeros, or returns impossible
-data SudokuSolution = FoundSolution [[Integer]] | UNSAT
+data FoundSolution = [[Integer]]
+
+data SudokuSolution = FoundSolution [[Integer]] | UNSAT deriving (Eq, Show)
 instance Show SudokuSolution where
   show (FoundSolution sudoku) =  sudoku2Str sudoku
   show UNSAT = "Solution not found :("
+instance Eq SudokuSolution where
+  (==) (FoundSolution x) (FoundSolution y) = (x == y)
+  (==) _ _ = False
 
 sudoku2Str :: [[Integer]] -> String
 sudoku2Str []     = ""
