@@ -157,7 +157,7 @@ sudoku2Str (r:rs) = row2Str r ++ "\n" ++ sudoku2Str rs
  where
   row2Str :: [Integer] -> String
   row2Str []     = ""
-  row2Str (x:xs) = show x ++ row2Str xs
+  row2Str (x:xs) = show x ++ " " ++ row2Str xs
 
 solve :: [[Integer]] -> SudokuSolution
 solve sudoku = solveHelper sudoku $ zeros (getHeight sudoku) (getWidth sudoku)
