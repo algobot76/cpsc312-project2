@@ -6,5 +6,5 @@ main :: IO ()
 main = do
     putStrLn "Enter an impcomplete sudoku: "
     input <- getLine
-    let arr = read input :: [[Integer]]
-    printSudoku arr
+    let sudoku = read input :: [[Integer]]
+    print (solve sudoku)
