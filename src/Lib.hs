@@ -152,12 +152,12 @@ instance Show SudokuSolution where
   show UNSAT = "Solution not found :("
 
 sudoku2Str :: [[Integer]] -> String
-sudoku2Str [] = ""
+sudoku2Str []     = ""
 sudoku2Str (r:rs) = row2Str r ++ "\n" ++ sudoku2Str rs
-  where
-    row2Str :: [Integer] -> String
-    row2Str [] = ""
-    row2Str (x:xs) = show x ++ row2Str xs
+ where
+  row2Str :: [Integer] -> String
+  row2Str []     = ""
+  row2Str (x:xs) = show x ++ row2Str xs
 
 solve :: [[Integer]] -> SudokuSolution
 solve sudoku = solveHelper sudoku $ zeros (getHeight sudoku) (getWidth sudoku)
@@ -209,15 +209,3 @@ isUNSAT UNSAT                  = True
 isUNSAT (FoundSolution matrix) = False
 
 getMatrix (FoundSolution matrix) = matrix
-
-simpleBoard =
-  [ [0, 1, 0, 0, 4, 0, 0, 5, 0]
-  , [0, 0, 0, 0, 2, 0, 0, 3, 0]
-  , [0, 0, 2, 0, 0, 0, 0, 0, 0]
-  , [0, 0, 1, 0, 0, 6, 0, 0, 0]
-  , [9, 0, 0, 8, 0, 0, 7, 0, 0]
-  , [0, 0, 0, 0, 5, 0, 0, 0, 0]
-  , [0, 0, 0, 0, 0, 0, 2, 0, 0]
-  , [0, 0, 0, 1, 0, 0, 5, 0, 0]
-  , [1, 0, 0, 0, 0, 0, 0, 0, 7]
-  ]
