@@ -1,7 +1,4 @@
-module Lib
-    (
-    solve
-    ) where
+module Lib where
 
 -- Return the number at (rowIdx, colIdx)
 getNum :: [[Integer]] -> Int -> Int -> Integer
