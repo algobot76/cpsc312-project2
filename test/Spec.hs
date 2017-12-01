@@ -49,10 +49,11 @@ satCtrT2 = TestCase (assertEqual "for (satisfiesConstraints sampleUnsolved)," Tr
 satCtrT3 = TestCase (assertEqual "for (satisfiesConstraints [[1,2,3,3],[1]])," False (satisfiesConstraints [[1,2,3,3],[1]]))
 
 --commented out, pending implementation of Eq for EntryPosition and SudokuSolution
---fs0T1 = TestCase (assertEqual "for (firstZero sampleUnsolved)," (Position 0 2) (firstZero sampleUnsolved))
---fs0T2 = TestCase (assertEqual "for (firstZero sampleSolved)," NONE (firstZero sampleSolved))
---solT1 = TestCase (assertEqual "for (solve sampleUnsolved)," (FoundSolution sampleSolved) (solve sampleUnsolved))
---solT2 = TestCase (assertEqual "for (solve sampleImpossible)," UNSAT (solve sampleImpossible))
+fs0T1 = TestCase (assertEqual "for (firstZero sampleUnsolved)," (Position 2 0) (firstZero sampleUnsolved))
+fs0T2 = TestCase (assertEqual "for (firstZero sampleSolved)," NONE (firstZero sampleSolved))
+fs0T3 = TestCase (assertEqual "for (firstZero (setNum sampleUnsolved 8 8 0)," (Position 8 8) (firstZero (setNum sampleUnsolved 8 8 0)))
+solT1 = TestCase (assertEqual "for (solve sampleUnsolved)," (FoundSolution sampleSolved) (solve sampleUnsolved))
+solT2 = TestCase (assertEqual "for (solve sampleImpossible)," UNSAT (solve sampleImpossible))
 
 --unit cases (grouping of unit tests)
 --tests = TestList [TestLabel "ttt" ttt, ]
@@ -63,7 +64,7 @@ uValTests = TestList [TestLabel "unqT1" unqT1, TestLabel "unqT2" unqT2, TestLabe
 cmtTests = TestList [TestLabel "cFilT1" cFilT1, TestLabel "cFilT2" cFilT2, TestLabel "mtT1" mtT1, TestLabel "mtT2" mtT2]
 gtSmTests = TestList [TestLabel "gtSmNT1" gtSmNT1, TestLabel "gtSmNT2" gtSmNT2, TestLabel "gtSmNT3" gtSmNT3, TestLabel "gtSmNT4" gtSmNT4, TestLabel "gtSmNT5" gtSmNT5, TestLabel "gtSmNT6" gtSmNT6, TestLabel "gtSmNT7" gtSmNT7, TestLabel "gtSmNT8" gtSmNT8, TestLabel "gtSmNT9" gtSmNT9]
 satCtrTests = TestList [TestLabel "satCtrT1" satCtrT1, TestLabel "satCtrT2" satCtrT2, TestLabel "satCtrT3" satCtrT3]
---solTests = TestList [TestLabel "fs0T1" fs0T1, TestLabel "fs0T2" fs0T2, TestLabel "solT1" solT1]
+solTests = TestList [TestLabel "fs0T1" fs0T1, TestLabel "fs0T2" fs0T2, TestLabel "fs0T3" fs0T3, TestLabel "solT1" solT1, TestLabel "solT2" solT2]
 
 main :: IO ()
 main = do
@@ -74,7 +75,7 @@ main = do
     runTestTT cmtTests
     runTestTT gtSmTests
     runTestTT satCtrTests
-    --runTestTT solTests
+    runTestTT solTests
     putStrLn "Tests concluded"
 
 {-simpleBoard =
