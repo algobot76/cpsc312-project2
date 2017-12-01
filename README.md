@@ -9,3 +9,15 @@ We use Stack to build our project. To find more info about Stack, please see [Us
 1. `stack setup`
 1. `stack build`
 1. Done
+
+## How to run the program
+
+### Method 1
+
+`stack exec solve-sudoku`
+
+### Method 2
+
+1. `stack install`
+1. Make sure the directory `/Users/username/.local/bin` exists and is in `PATH`
+1. In your terminal, type `solve-sudoku`
