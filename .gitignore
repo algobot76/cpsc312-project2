@@ -22,3 +22,5 @@ cabal.sandbox.config
 .stack-work/
 cabal.project.local
 .HTF/
+app/Lib.hs
+app/Spec.hs

@@ -26,8 +26,8 @@ setNumTest3 = TestCase (assertEqual "for (setNum sampleSolved 8 8 60)," 60 (((se
 unqT1 = TestCase (assertEqual "for (isUnique [1,2,3,4,5])," True (isUnique [1,2,3,4,5]))
 unqT2 = TestCase (assertEqual "for (isUnique [1,2,3,4,5,6,2,4,5,2])," False (isUnique [1,2,3,4,5,6,2,4,5,2]))
 valT1 = TestCase (assertEqual "for (isValid sampleSolved)," True (isValid sampleSolved))
-valT2 = TestCase (assertEqual "for (isValid sampleUnsolved)," True (isValid sampleUnsolved))
-valT3 = TestCase (assertEqual "for (isValid sampleUnsolved)," True (isValid [[1,2,3,3],[1]]))
+valT2 = TestCase (assertEqual "for (isValid sampleUnsolved)," False (isValid sampleUnsolved))
+valT3 = TestCase (assertEqual "for (isValid [[1,2,3,3],[1]])," False (isValid [[1,2,3,3],[1]]))
 
 cFilT1 = TestCase (assertEqual "for (canFill sampleUnsolved 1 2 6)," False (canFill sampleUnsolved 1 2 6))
 cFilT2 = TestCase (assertEqual "for (canFill sampleUnsolved 1 2 2)," True (canFill sampleUnsolved 1 2 2))
@@ -44,6 +44,10 @@ gtSmNT7 = TestCase (assertEqual "for (getSMNum 0 9)," 7 (getSMNum 8 0))
 gtSmNT8 = TestCase (assertEqual "for (getSMNum 5 9)," 8 (getSMNum 8 4))
 gtSmNT9 = TestCase (assertEqual "for (getSMNum 9 9)," 9 (getSMNum 8 8))
 
+satCtrT1 = TestCase (assertEqual "for (satisfiesConstraints sampleSolved)," True (satisfiesConstraints sampleSolved))
+satCtrT2 = TestCase (assertEqual "for (satisfiesConstraints sampleUnsolved)," True (satisfiesConstraints sampleUnsolved))
+satCtrT3 = TestCase (assertEqual "for (satisfiesConstraints [[1,2,3,3],[1]])," False (satisfiesConstraints [[1,2,3,3],[1]]))
+
 --commented out, pending implementation of Eq for EntryPosition and SudokuSolution
 --fs0T1 = TestCase (assertEqual "for (firstZero sampleUnsolved)," (Position 0 2) (firstZero sampleUnsolved))
 --fs0T2 = TestCase (assertEqual "for (firstZero sampleSolved)," NONE (firstZero sampleSolved))
@@ -58,6 +62,7 @@ setTests = TestList [TestLabel "setNumTest1" setNumTest1, TestLabel "setNumTest2
 uValTests = TestList [TestLabel "unqT1" unqT1, TestLabel "unqT2" unqT2, TestLabel "valT1" valT1, TestLabel "valT2" valT2, TestLabel "valT3" valT3]
 cmtTests = TestList [TestLabel "cFilT1" cFilT1, TestLabel "cFilT2" cFilT2, TestLabel "mtT1" mtT1, TestLabel "mtT2" mtT2]
 gtSmTests = TestList [TestLabel "gtSmNT1" gtSmNT1, TestLabel "gtSmNT2" gtSmNT2, TestLabel "gtSmNT3" gtSmNT3, TestLabel "gtSmNT4" gtSmNT4, TestLabel "gtSmNT5" gtSmNT5, TestLabel "gtSmNT6" gtSmNT6, TestLabel "gtSmNT7" gtSmNT7, TestLabel "gtSmNT8" gtSmNT8, TestLabel "gtSmNT9" gtSmNT9]
+satCtrTests = TestList [TestLabel "satCtrT1" satCtrT1, TestLabel "satCtrT2" satCtrT2, TestLabel "satCtrT3" satCtrT3]
 --solTests = TestList [TestLabel "fs0T1" fs0T1, TestLabel "fs0T2" fs0T2, TestLabel "solT1" solT1]
 
 main :: IO ()
@@ -68,6 +73,7 @@ main = do
     runTestTT uValTests
     runTestTT cmtTests
     runTestTT gtSmTests
+    runTestTT satCtrTests
     --runTestTT solTests
     putStrLn "Tests concluded"
 
