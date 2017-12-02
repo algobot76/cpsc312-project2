@@ -19,5 +19,5 @@ We use Stack to build our project. To find more info about Stack, please see [Us
 ### Method 2
 
 1. `stack install`
-1. Make sure the directory `/Users/username/.local/bin` exists and is in `PATH`
+1. Make sure the directory `~/.local/bin` exists and is in `PATH`
 1. In your terminal, type `solve-sudoku`
