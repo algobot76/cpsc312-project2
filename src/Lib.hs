@@ -154,7 +154,7 @@ module Lib where
   -- last number which can be incremented
   lastIncrementableEntry :: [[Integer]] -> [[Integer]] -> EntryPosition
   lastIncrementableEntry sudoku scratch =
-    lastIncrementableEntryHelper sudoku scratch (getY fz) (getX fz)
+    lastIncrementableEntryHelper sudoku scratch (getHeight sudoku - 1) (getWidth sudoku - 1)
     where fz = firstZero scratch
     
   lastIncrementableEntryHelper :: [[Integer]] -> [[Integer]] -> Int -> Int -> EntryPosition
