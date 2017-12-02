@@ -202,7 +202,7 @@ module Lib where
     row2Str (x:xs) = show x ++ " " ++ row2Str xs
   
   solve :: [[Integer]] -> SudokuSolution
-  solve sudoku = solveHelper sudoku $ zeros (getHeight sudoku) (getWidth sudoku)
+  solve sudoku = solveHelper sudoku sudoku
   
   solveHelper :: [[Integer]] -> [[Integer]] -> SudokuSolution
   solveHelper sudoku scratch
@@ -231,7 +231,7 @@ module Lib where
   
   -- matches: checks that the non-zero terms agree
   matches :: [[Integer]] -> [[Integer]] -> Bool
-  matches a b = not (any (\(a, b) -> (a == 0 || b == 0 || a == b)) (zip fa fb))
+  matches a b = not (any (\(a, b) -> (a /= 0 && b /= 0 && a /= b)) (zip fa fb))
    where
     fa = concat a
     fb = concat b
