@@ -142,7 +142,7 @@ module Lib where
   
   firstZeroHelper :: [[Integer]] -> Int -> Int -> EntryPosition
   firstZeroHelper sudoku y x
-    | getNum sudoku x y == 0 = Position x y
+    | getNum sudoku y x == 0 = Position x y
     | (y == ((getHeight sudoku)-1)) && (x == ((getWidth sudoku)-1)) = NONE
     | otherwise = firstZeroHelper sudoku nexty nextx
     where
@@ -151,7 +151,7 @@ module Lib where
       nexty | nextx == 0 = y + 1
             | otherwise  = y
   
-  -- last numebr which can be incremented
+  -- last number which can be incremented
   lastIncrementableEntry :: [[Integer]] -> [[Integer]] -> EntryPosition
   lastIncrementableEntry sudoku scratch =
     lastIncrementableEntryHelper sudoku scratch (getY fz) (getX fz)
@@ -159,11 +159,11 @@ module Lib where
     
   lastIncrementableEntryHelper :: [[Integer]] -> [[Integer]] -> Int -> Int -> EntryPosition
   lastIncrementableEntryHelper sudoku scratch y x
+    | (x < 0) || (y < 0) = NONE
     | getNum scratch y x == 0 = next
     | getNum scratch y x == 9 = next
     | getNum sudoku y x /= 0 = next
-    | (x >= 0) && (y >= 0) = Position x y
-    | otherwise = NONE
+    | otherwise = Position x y
     where nextx | x > 0 = (x - 1)
                 | otherwise = getWidth sudoku - 1
           nexty | x > 0 = y
