@@ -170,13 +170,6 @@ module Lib where
                 | otherwise = y - 1
           next = lastIncrementableEntryHelper sudoku scratch nexty nextx
   
-  -- adds one to the given entry of the second matrix and
-  -- replaces numbers right thereof with entries from first matrix
-  incrementAt :: [[Integer]] -> [[Integer]] -> Int -> Int -> [[Integer]]
-  incrementAt sudoku scratch y x =
-    replaceAfter sudoku (setNum scratch y x (getNum scratch y x + 1)) y x
-  
-  
   -- zeros: constructs a matrix of zeros
   zeros :: Int -> Int -> [[Integer]]
   zeros w h = [ [ 0 | x <- [1 .. w] ] | y <- [1 .. h] ]
@@ -214,13 +207,12 @@ module Lib where
   solveHelper :: [[Integer]] -> [[Integer]] -> SudokuSolution
   solveHelper sudoku scratch
     | isValid scratch = FoundSolution scratch
-    | (isUNSAT nextScratch) = UNSAT
-    | (satisfiesConstraints scratch) && (matches scratch sudoku) = increment
-      sudoku
-      scratch
-      False
-    | otherwise = solveHelper sudoku (getMatrix nextScratch)
-    where nextScratch = increment sudoku scratch True
+    | (satisfiesConstraints scratch) && (matches scratch sudoku) =
+        solveHelper sudoku $ getMatrix nextScratch
+    | isUNSAT backtrackScratch = UNSAT
+    | otherwise = solveHelper sudoku $ getMatrix backtrackScratch
+    where nextScratch = increment sudoku scratch False
+          backtrackScratch = increment sudoku scratch True
   
   -- increment: checks if scratch board can be incremented given a constraining sudoku puzzle
   increment :: [[Integer]] -> [[Integer]] -> Bool -> SudokuSolution
@@ -231,22 +223,11 @@ module Lib where
     where fz = firstZero scratch
           ln = lastIncrementableEntry sudoku scratch
 
-  incrementHelper :: [[Integer]] -> [[Integer]] -> Int -> Int -> SudokuSolution
-  incrementHelper sudoku scratch y x
-    | unsat = UNSAT
-    | (satisfiesConstraints scratch) && (matches sudoku scratch) = FoundSolution
-      scratch
-    | fixed = incrementHelper sudoku scratch nextx nexty
-    | num < 9 = FoundSolution $ setNum sudoku y x (1 + getNum sudoku y x)
-    | otherwise = incrementHelper sudoku (setNum sudoku x y 0) nextx nexty
-   where
-    num   = getNum scratch y x
-    fixed = (getNum sudoku y x) > 0
-    nextx | x > 0     = x - 1
-          | otherwise = (getWidth sudoku) - 1
-    nexty | x > 0     = y
-          | otherwise = y - 1
-    unsat = nexty < 0
+  -- adds one to the given entry of the second matrix and
+  -- replaces numbers right thereof with entries from first matrix
+  incrementAt :: [[Integer]] -> [[Integer]] -> Int -> Int -> [[Integer]]
+  incrementAt sudoku scratch y x =
+    replaceAfter sudoku (setNum scratch y x (getNum scratch y x + 1)) y x
   
   -- matches: checks that the non-zero terms agree
   matches :: [[Integer]] -> [[Integer]] -> Bool
