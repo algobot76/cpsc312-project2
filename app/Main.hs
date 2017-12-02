@@ -33,10 +33,10 @@ main = do
     r9 <- promptRow 9
     let row9 = map (\x -> read x :: Integer) r9
     let sudoku = row1:row2:row3:row4:row5:row6:row7:row8:row9:[]
-    putStrLn (show sudoku)
-{-main = do
-    putStrLn "Enter an incomplete sudoku: "
-    input <- getLine
-    let sudoku = read input :: [[Integer]]
     print (solve sudoku)
-    -}
+
+-- main = do
+--     putStrLn "Enter an incomplete sudoku: "
+--     input <- getLine
+--     let sudoku = read input :: [[Integer]]
+--     print (solve sudoku)
