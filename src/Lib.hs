@@ -145,15 +145,51 @@ module Lib where
     | getNum sudoku x y == 0 = Position x y
     | (y == ((getHeight sudoku)-1)) && (x == ((getWidth sudoku)-1)) = NONE
     | otherwise = firstZeroHelper sudoku nexty nextx
-   where
-    nextx | x < (getWidth sudoku) - 1 = x + 1
-          | otherwise                 = 0
-    nexty | nextx == 0 = y + 1
-          | otherwise  = y
+    where
+      nextx | x < (getWidth sudoku) - 1 = x + 1
+            | otherwise                 = 0
+      nexty | nextx == 0 = y + 1
+            | otherwise  = y
+  
+  -- last numebr which can be incremented
+  lastIncrementableEntry :: [[Integer]] -> [[Integer]] -> EntryPosition
+  lastIncrementableEntry sudoku scratch =
+    lastIncrementableEntryHelper sudoku scratch (getY fz) (getX fz)
+    where fz = firstZero scratch
+    
+  lastIncrementableEntryHelper :: [[Integer]] -> [[Integer]] -> Int -> Int -> EntryPosition
+  lastIncrementableEntryHelper sudoku scratch y x
+    | getNum scratch y x == 0 = next
+    | getNum scratch y x == 9 = next
+    | getNum sudoku y x /= 0 = next
+    | (x >= 0) && (y >= 0) = Position x y
+    | otherwise = NONE
+    where nextx | x > 0 = (x - 1)
+                | otherwise = getWidth sudoku - 1
+          nexty | x > 0 = y
+                | otherwise = y - 1
+          next = lastIncrementableEntryHelper sudoku scratch nexty nextx
+  
+  -- adds one to the given entry of the second matrix and
+  -- replaces numbers right thereof with entries from first matrix
+  incrementAt :: [[Integer]] -> [[Integer]] -> Int -> Int -> [[Integer]]
+  incrementAt sudoku scratch y x =
+    replaceAfter sudoku (setNum scratch y x (getNum scratch y x + 1)) y x
+  
   
   -- zeros: constructs a matrix of zeros
   zeros :: Int -> Int -> [[Integer]]
   zeros w h = [ [ 0 | x <- [1 .. w] ] | y <- [1 .. h] ]
+  
+  -- Fills in all positions after the given in matrix 2 with matrix 1
+  replaceAfter :: [[Integer]] -> [[Integer]] -> Int -> Int -> [[Integer]]
+  replaceAfter sudoku scratch y x
+    | (x == getWidth scratch - 1) && (y == getHeight scratch - 1) = scratch
+    | otherwise = replaceAfter sudoku (setNum scratch nexty nextx (getNum sudoku nexty nextx)) nexty nextx
+    where nextx | x < getWidth scratch - 1 = x + 1
+                | otherwise = 0
+          nexty | nextx == 0 = y + 1
+                | otherwise = y
   
   -- Brute Force solver: fills in zeros, or returns impossible
   data SudokuSolution = FoundSolution [[Integer]] | UNSAT
@@ -189,10 +225,12 @@ module Lib where
   -- increment: checks if scratch board can be incremented given a constraining sudoku puzzle
   increment :: [[Integer]] -> [[Integer]] -> Bool -> SudokuSolution
   increment sudoku scratch backtrack
+    | backtrack = FoundSolution $ incrementAt sudoku scratch (getY ln) (getX ln)
     | isNONE fz = UNSAT
-    | otherwise = incrementHelper sudoku scratch (getX fz) (getY fz)
+    | otherwise = FoundSolution $ incrementAt sudoku scratch (getY fz) (getX fz)
     where fz = firstZero scratch
-  
+          ln = lastIncrementableEntry sudoku scratch
+
   incrementHelper :: [[Integer]] -> [[Integer]] -> Int -> Int -> SudokuSolution
   incrementHelper sudoku scratch y x
     | unsat = UNSAT
