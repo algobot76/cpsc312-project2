@@ -32,7 +32,9 @@ main = do
     let row8 = map (\x -> read x :: Integer) r8
     r9 <- promptRow 9
     let row9 = map (\x -> read x :: Integer) r9
-    let sudoku = row1:row2:row3:row4:row5:row6:row7:row8:row9:[]
+    let sudoku =
+            row1 : row2 : row3 : row4 : row5 : row6 : row7 : row8 : row9 : []
+    putStrLn "The solution is:"
     print (solve sudoku)
 
 -- main = do
